@@ -37,7 +37,7 @@ mongoose
 
 // simple route to check if server is running
 server.get("/", (request, response) => {
-  response.send("Grocery app is live");
+  response.send("server is live");
 });
 
 // GET /products
@@ -45,10 +45,9 @@ server.get("/", (request, response) => {
 server.get("/products", async (request, response) => {
   try {
     const products = await Product.find();
-    console.log(products)
     response.send(products);
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    response.status(500).send({ message: error.message });
   }
 });
 
