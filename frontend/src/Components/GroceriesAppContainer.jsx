@@ -140,10 +140,8 @@ export default function GroceriesAppContainer() {
       )
     );
   };
-  //////////////////////////////////////////
 
-  //////////////////////////////////////////
-  // CART HANDLERS
+  // cart handlers
   const addToCart = (id) => {
     const item = items.find((p) => p.id === id);
     const selectedQty = quantities.find((q) => q.id === id)?.qty;
