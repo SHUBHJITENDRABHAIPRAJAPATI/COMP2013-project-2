@@ -1,5 +1,5 @@
 // backend/models/product.js
-// Mongoose model for products collection
+// mongoose for products collection
 const mongoose = require("mongoose");
 
 // schema representing one product document in the products collection
@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema(
     },
   },
   {
-    // automatically manage createdAt and updatedAt fields bcz i found error on my webpage without it
+    // automatically manage createdAt and updatedAt fields:it adds two fields createdAt and updatedAt to the schema and automatically updates them when a document is created or modified.
     timestamps: true, 
   }
 );

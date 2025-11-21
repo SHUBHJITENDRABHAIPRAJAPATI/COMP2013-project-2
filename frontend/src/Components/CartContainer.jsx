@@ -7,7 +7,12 @@ export default function CartContainer({
   removeFromCart,
   clearCart,
 }) {
-  // wrappers for QuantityCounter in "cart" mode
+  // handlers for quantity adjustment and removal
+  // these functions call the respective props functions with appropriate parameters
+  // to modify the cart state in the parent component
+  // i did not put mode parameter in these functions bcz these functions are only for cart mode
+  //i wrote all functions inside the component to avoid prop drilling issues
+  //also,i implemented all CartContainer functionalities here to keep avoid unnecessary complexity in parent component and avoid errors in parent component
   const handleAddQuantity = (id, mode) => {
     adjustQuantity(id, "inc", "cart");
   };

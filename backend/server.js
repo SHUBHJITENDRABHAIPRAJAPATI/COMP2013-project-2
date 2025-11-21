@@ -1,5 +1,5 @@
 // backend/server.js
-// Express server for products API
+// server for products API
 //stating server and connecting to database
 
 const express = require("express");
@@ -35,7 +35,7 @@ mongoose
 
 // Routes
 
-// simple route to check if server is running
+// server checking route
 server.get("/", (request, response) => {
   response.send("server is live");
 });
@@ -73,7 +73,7 @@ server.post("/products", async (request, response) => {
 });
 
 // DELETE /products/:id
-// delete a product
+// delete a product by fetching id from db
 server.delete("/products/:id", async (request, response) => {
   const { id } = request.params;
   const objectId = new mongoose.Types.ObjectId(id); // Convert id to Mongoose ObjectId
