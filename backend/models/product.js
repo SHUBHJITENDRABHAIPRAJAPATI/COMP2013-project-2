@@ -27,7 +27,6 @@ const productSchema = new mongoose.Schema(
       required: false,
     
     },
-    // Price is stored as a string (e.g. "$3.65") to match the JSON exactly
     price: {
       type: String,
       required: true, 
