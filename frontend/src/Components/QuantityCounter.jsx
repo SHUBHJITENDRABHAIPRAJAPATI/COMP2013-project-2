@@ -1,3 +1,4 @@
+// src/Components/QuantityCounter.jsx
 export default function QuantityCounter({
   productQuantity,
   handleAddQuantity,

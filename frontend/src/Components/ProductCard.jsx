@@ -1,110 +1,67 @@
-// src/Components/ProductsContainer.jsx
-import ProductCard from "./ProductCard";
+// src/Components/ProductCard.jsx
+import QuantityCounter from "./QuantityCounter";
 
-export default function ProductsContainer({
-  products,
+export default function ProductCard({
+  id,
+  mongoId, // MongoDB _id (for delete/update)
+  productName,
+  brand,
+  image,
+  price,
   productQuantity,
   handleAddQuantity,
   handleRemoveQuantity,
   handleAddToCart,
-  // CRUD / form
   handleEdit,
   handleDelete,
-  formData,
-  handleOnChange,
-  handleOnSubmit,
-  postResponse,
-  isEditing,
 }) {
-  const getQuantityForProduct = (id) => {
-    const pq = productQuantity.find((p) => p.id === id);
-    return pq ? pq.quantity : 0;
+  const onAddToCart = () => {
+    handleAddToCart(id);
+  };
+
+  const onEdit = () => {
+    if (!handleEdit) return;
+    // Rebuild a product object like what GroceriesAppContainer expects
+    handleEdit({
+      _id: mongoId,
+      id,
+      productName,
+      brand,
+      image,
+      price,
+    });
+  };
+
+  const onDelete = () => {
+    if (!handleDelete) return;
+    handleDelete(mongoId);
   };
 
   return (
-    <div className="Products-Container">
-      {/* LEFT: Product Form */}
-      <div className="Product-Form">
-        <h3>Product Form</h3>
-        <form onSubmit={handleOnSubmit}>
-          <div className="form-group">
-            <label htmlFor="id">Product Id</label>
-            <input
-              id="id"
-              name="id"
-              value={formData.id}
-              onChange={handleOnChange}
-              placeholder="Barcode / Id"
-              required
-            />
-          </div>
+    <div className="ProductCard">
+      <h3>{productName}</h3>
+      {image && <img src={image} alt={productName} />}
+      <h4>{brand}</h4>
 
-          <div className="form-group">
-            <label htmlFor="productName">Product Name</label>
-            <input
-              id="productName"
-              name="productName"
-              value={formData.productName}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
+      <QuantityCounter
+        handleAddQuantity={handleAddQuantity}
+        productQuantity={productQuantity}
+        handleRemoveQuantity={handleRemoveQuantity}
+        id={id}
+        mode="product"
+      />
 
-          <div className="form-group">
-            <label htmlFor="brand">Brand</label>
-            <input
-              id="brand"
-              name="brand"
-              value={formData.brand}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
+      <h3>{price}</h3>
 
-          <div className="form-group">
-            <label htmlFor="image">Image URL</label>
-            <input
-              id="image"
-              name="image"
-              value={formData.image}
-              onChange={handleOnChange}
-            />
-          </div>
+      <button onClick={onAddToCart}>Add to Cart</button>
 
-          <div className="form-group">
-            <label htmlFor="price">Price</label>
-            <input
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleOnChange}
-              placeholder="$2.50"
-              required
-            />
-          </div>
-
-          <button type="submit">
-            {isEditing ? "Update" : "Submit"}
-          </button>
-        </form>
-
-        {postResponse && <p className="form-message">{postResponse}</p>}
-      </div>
-
-      {/* RIGHT: Product Cards */}
-      <div className="Products-Grid">
-        {products.map((product) => (
-          <ProductCard
-            key={product._id || product.id}
-            product={product}
-            quantity={getQuantityForProduct(product.id)}
-            handleAddQuantity={handleAddQuantity}
-            handleRemoveQuantity={handleRemoveQuantity}
-            handleAddToCart={handleAddToCart}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-          />
-        ))}
+      <div className="ProductActions">
+        <button type="button" onClick={onEdit}>
+          Edit
+        </button>
+        <button type="button" onClick={onDelete}>
+          Delete
+        </button>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+// src/Components/CartCard.jsx
 import QuantityCounter from "./QuantityCounter";
 
 export default function CartCard({
@@ -23,12 +24,11 @@ export default function CartCard({
           handleRemoveQuantity={handleRemoveQuantity}
           mode="cart"
         />
-        {/* <h3>x {quantity}</h3> */}
       </div>
 
       <div>
         <h3>
-          Total: ${(parseFloat(price.replace("$", "")) * quantity).toFixed(2)}
+          Total: {(parseFloat(price.replace("$", "")) * quantity).toFixed(2)}
         </h3>
         <button
           onClick={() => handleRemoveFromCart(id)}

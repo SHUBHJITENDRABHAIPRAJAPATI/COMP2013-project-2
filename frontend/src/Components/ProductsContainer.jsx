@@ -3,43 +3,48 @@ import ProductCard from "./ProductCard";
 
 export default function ProductsContainer({
   products,
-  handleAddQuantity,
-  handleRemoveQuantity,
-  handleAddToCart,
-  productQuantity,
-  // CRUD / form
+  quantities,
+  adjustQuantity,
+  addToCart,
   handleEdit,
   handleDelete,
   formData,
-  handleOnChange,
-  handleOnSubmit,
-  postResponse,
-  isEditing,
-  // react-hook-form
-  register,
+  handleChange,
   handleSubmit,
-  errors,
+  isEditing,
+  serverMessage,
 }) {
+  // find current qty for a product
+  const getQuantityForProduct = (id) => {
+    const entry = quantities.find((q) => q.id === id);
+    return entry ? entry.qty : 0;
+  };
+
+  // wrappers for QuantityCounter in "product" mode
+  const handleAddQuantity = (id, mode) => {
+    adjustQuantity(id, "inc", "product");
+  };
+
+  const handleRemoveQuantity = (id, mode) => {
+    adjustQuantity(id, "dec", "product");
+  };
+
   return (
-    <div className="Products-Container">
-      {/* LEFT: Product Form */}
-      <div className="Product-Form">
+    <div className="ProductsContainer">
+      {/* Product form is one “card” in the grid, like in the reference */}
+      <div className="ProductCard ProductForm">
         <h3>Product Form</h3>
-        {/* react-hook-form handles submit */}
-        <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="id">Product Id</label>
             <input
               id="id"
               name="id"
-              placeholder="Barcode / Id"
-              // react-hook-form
-              {...register("id", { required: true })}
-              // keep local state in sync
               value={formData.id}
-              onChange={handleOnChange}
+              onChange={handleChange}
+              placeholder="Barcode / Id"
+              required
             />
-            {errors.id && <span className="error">Id is required</span>}
           </div>
 
           <div className="form-group">
@@ -47,13 +52,10 @@ export default function ProductsContainer({
             <input
               id="productName"
               name="productName"
-              {...register("productName", { required: true })}
               value={formData.productName}
-              onChange={handleOnChange}
+              onChange={handleChange}
+              required
             />
-            {errors.productName && (
-              <span className="error">Product name is required</span>
-            )}
           </div>
 
           <div className="form-group">
@@ -61,13 +63,10 @@ export default function ProductsContainer({
             <input
               id="brand"
               name="brand"
-              {...register("brand", { required: true })}
               value={formData.brand}
-              onChange={handleOnChange}
+              onChange={handleChange}
+              required
             />
-            {errors.brand && (
-              <span className="error">Brand is required</span>
-            )}
           </div>
 
           <div className="form-group">
@@ -75,9 +74,8 @@ export default function ProductsContainer({
             <input
               id="image"
               name="image"
-              {...register("image")}
               value={formData.image}
-              onChange={handleOnChange}
+              onChange={handleChange}
             />
           </div>
 
@@ -86,41 +84,39 @@ export default function ProductsContainer({
             <input
               id="price"
               name="price"
-              placeholder="$2.50"
-              {...register("price", { required: true })}
               value={formData.price}
-              onChange={handleOnChange}
+              onChange={handleChange}
+              placeholder="$2.50"
+              required
             />
-            {errors.price && (
-              <span className="error">Price is required</span>
-            )}
           </div>
 
           <button type="submit">{isEditing ? "Update" : "Submit"}</button>
         </form>
 
-        {postResponse && <p className="form-message">{postResponse}</p>}
+        {serverMessage && (
+          <p className="form-message">{serverMessage}</p>
+        )}
       </div>
 
-      {/* RIGHT: Product Cards */}
-      <div className="ProductsContainer">
-        {products.map((product) => (
-          <ProductCard
-            key={product._id || product.id}
-            {...product}
-            handleAddQuantity={handleAddQuantity}
-            handleRemoveQuantity={handleRemoveQuantity}
-            handleAddToCart={handleAddToCart}
-            // find quantity for this product id
-            productQuantity={
-              productQuantity.find((p) => p.id === product.id)?.quantity || 0
-            }
-            // CRUD
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {/* Product cards – same basic mapping as professor’s version */}
+      {products.map((product) => (
+        <ProductCard
+          key={product._id || product.id}
+          id={product.id}
+          productName={product.productName}
+          brand={product.brand}
+          image={product.image}
+          price={product.price}
+          productQuantity={getQuantityForProduct(product.id)}
+          handleAddQuantity={handleAddQuantity}
+          handleRemoveQuantity={handleRemoveQuantity}
+          handleAddToCart={addToCart}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          mongoId={product._id}
+        />
+      ))}
     </div>
   );
 }
