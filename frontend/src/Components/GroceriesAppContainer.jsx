@@ -32,7 +32,7 @@ export default function GroceriesAppContainer() {
     price: "",
   });
 
-  // Message from the server (success / error)
+  // message from the server (success / error)
   const [serverMessage, setServerMessage] = useState("");
 
   // fetch products from database on component mount
@@ -43,12 +43,13 @@ export default function GroceriesAppContainer() {
 
   const loadProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/products");
-      setItems(res.data);
+
+      const response = await axios.get("http://localhost:3000/products");
+      setItems(response.data);
 
       // Build / rebuild quantity tracker for each product
       setQuantities(
-        res.data.map((item) => ({
+        response.data.map((item) => ({
           id: item.id,
           qty: 0,
         }))
@@ -58,8 +59,7 @@ export default function GroceriesAppContainer() {
     }
   };
 
-  //////////////////////////////////////////
-  // FORM HANDLERS (similar to handleOnchange / handleOnSubmit)
+  // form handlers 
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -109,8 +109,7 @@ export default function GroceriesAppContainer() {
     });
   };
 
-  //////////////////////////////////////////
-  // UPDATE AND DELETE HANDLERS (similar to handleUpdate / handleDelete)
+  // update and delete handlers 
 
   const updateProduct = async (mongoId) => {
     try {
@@ -136,8 +135,7 @@ export default function GroceriesAppContainer() {
     }
   };
 
-  //////////////////////////////////////////
-  // QUANTITY LOGIC (replaces handleAddQuantity / handleRemoveQuantity)
+  // quantity logic (used for both products list and cart)
 
   const adjustQuantity = (id, type, source) => {
     const setter = source === "cart" ? setCartItems : setQuantities;
@@ -159,8 +157,7 @@ export default function GroceriesAppContainer() {
     );
   };
 
-  //////////////////////////////////////////
-  // CART HANDLERS (similar idea to your old cartList logic)
+  // cart handlers 
 
   const addToCart = (id) => {
     const item = items.find((p) => p.id === id);
@@ -189,8 +186,7 @@ export default function GroceriesAppContainer() {
 
   const clearCart = () => setCartItems([]);
 
-  //////////////////////////////////////////
-  // RENDER
+  // rendering the component
 
   return (
     <div className="groceries-app">

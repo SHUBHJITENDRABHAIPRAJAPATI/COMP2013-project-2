@@ -23,6 +23,7 @@ export default function CartCard({
           handleAddQuantity={handleAddQuantity}
           handleRemoveQuantity={handleRemoveQuantity}
           mode="cart"
+
         />
       </div>
 

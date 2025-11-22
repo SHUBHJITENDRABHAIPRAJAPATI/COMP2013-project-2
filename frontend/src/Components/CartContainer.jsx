@@ -7,7 +7,12 @@ export default function CartContainer({
   removeFromCart,
   clearCart,
 }) {
-  // wrappers for QuantityCounter in "cart" mode
+  /*i did get errors to fix handleRemoveFromCart,handleAddQuantity,handleRemoveQuantity,handleClearCart,
+  bcz they relied on props functions from parent component GroceriesAppContainer which were not passed down to CartContainer.jsx
+  so i defined those functions here in CartContainer.jsx to fix the errors
+  refernce:https://react.dev/learn/sharing-state-between-components?utm_source=chatgpt.com
+  */
+
   const handleAddQuantity = (id, mode) => {
     adjustQuantity(id, "inc", "cart");
   };
@@ -50,15 +55,20 @@ export default function CartContainer({
               handleRemoveQuantity={handleRemoveQuantity}
             />
           ))}
-          <div className="CartListBtns">
-            <button
-              onClick={handleClearCart}
-              className="RemoveButton"
-            >
+         <div className="CartListBtns">
+            <button onClick={() => handleClearCart()} className="RemoveButton">
               Empty Cart
             </button>
             <button id="BuyButton">
-              Checkout: ${totalPrice}
+              Checkout:{" $"}
+              {cartList
+                .reduce(
+                  (total, item) =>
+                    total +
+                    parseFloat(item.price.replace("$", "")) * item.quantity,
+                  0
+                )
+                .toFixed(2)}
             </button>
           </div>
         </>
