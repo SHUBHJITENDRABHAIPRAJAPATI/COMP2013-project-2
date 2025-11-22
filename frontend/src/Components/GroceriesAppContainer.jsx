@@ -1,5 +1,23 @@
 // src/Components/GroceriesAppContainer.jsx
 
+/*
+in this file,i render the main GroceriesAppContainer component which manages the overall state and logic of the groceries app.
+it handles product fetching, quantity adjustments, cart management, and product add/edit/delete operations.
+it uses axios for backend communication and react hooks for state management.
+*/
+/*
+note:
+i got the error in GroceriesAppContainer.jsx file while defining the function updateProduct() inside handleSubmit() function
+the error was "updateProduct is not defined"
+to fix this error,i moved the function updateProduct() outside the handleSubmit() function and defined it as a separate function inside GroceriesAppContainer.jsx
+this way,updateProduct() is properly defined and can be called from handleSubmit() without any issues.
+*/
+
+/*
+the groceryappcontainer.jsx file i copy concept from youtube video,which was for the shopping cart app
+reference link:https://www.youtube.com/watch?v=uMBgUUPkgUY
+*/
+
 // importing necessary modules and components
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -40,7 +58,8 @@ export default function GroceriesAppContainer() {
   useEffect(() => {
     loadProducts();
   }, []);
-
+  
+// function to load products from the backend
   const loadProducts = async () => {
     try {
 
@@ -70,17 +89,17 @@ export default function GroceriesAppContainer() {
 
     try {
       if (isEditing) {
-        // Update existing product
+        // update existing product
         await updateProduct(formData._id);
         setIsEditing(false);
       } else {
-        // Add new product
+        // add new product
         await axios
           .post("http://localhost:3000/products", formData)
           .then((res) => setServerMessage(res.data.message));
       }
 
-      // Reset form
+      // reset form
       setFormData({
         id: "",
         productName: "",
@@ -89,7 +108,7 @@ export default function GroceriesAppContainer() {
         price: "",
       });
 
-      // Refresh product list
+      // refresh product list
       loadProducts();
     } catch (error) {
       console.log(error.message);
@@ -122,7 +141,7 @@ export default function GroceriesAppContainer() {
       console.log("Update Error:", error.message);
     }
   };
-
+// delete product handler
   const handleDelete = async (mongoId) => {
     try {
       await axios
@@ -135,7 +154,7 @@ export default function GroceriesAppContainer() {
     }
   };
 
-  // quantity logic (used for both products list and cart)
+  // quantity logic (for products and cart)
 
   const adjustQuantity = (id, type, source) => {
     const setter = source === "cart" ? setCartItems : setQuantities;
@@ -167,6 +186,7 @@ export default function GroceriesAppContainer() {
       alert(`Please select quantity for ${item.productName}`);
       return;
     }
+    // add to cart logic
 
     setCartItems((prev) => {
       const exists = prev.find((p) => p.id === id);
@@ -181,16 +201,17 @@ export default function GroceriesAppContainer() {
     });
   };
 
+  // remove from cart handler
   const removeFromCart = (id) =>
     setCartItems((prev) => prev.filter((p) => p.id !== id));
 
   const clearCart = () => setCartItems([]);
 
-  // rendering the component
+  // rendering the component for App.jsx
 
   return (
     <div className="groceries-app">
-      {/* NavBar gets number of items in cart */}
+      {/* navBar gets number of items in cart */}
       <NavBar quantity={cartItems.length} />
 
       <div className="GroceriesApp-Container">
@@ -220,3 +241,5 @@ export default function GroceriesAppContainer() {
     </div>
   );
 }
+
+

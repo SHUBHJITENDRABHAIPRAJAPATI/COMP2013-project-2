@@ -3,7 +3,7 @@ import QuantityCounter from "./QuantityCounter";
 
 export default function ProductCard({
   id,
-  mongoId, // MongoDB _id (for delete/update)
+  mongoId, // mongoDB _id (for delete/update)
   productName,
   brand,
   image,
@@ -18,7 +18,7 @@ export default function ProductCard({
   const onAddToCart = () => {
     handleAddToCart(id);
   };
-
+/*as usually, defining onEdit and onDelete functions to call the passed handlers*/
   const onEdit = () => {
     if (!handleEdit) return;
     // Rebuild a product object like what GroceriesAppContainer expects
