@@ -1,20 +1,29 @@
-// adding all functionalities of groceries app container
-//importing necessary libraries and components as per requirement
+// src/Components/GroceriesAppContainer.jsx
+
+// importing necessary modules and components
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import ProductsContainer from "./ProductsContainer";
 import CartContainer from "./CartContainer";
-import { response } from "express";
+import { useForm } from "react-hook-form"; // imported like in the lecture (even if you don't use it yet)
 
 export default function GroceriesAppContainer() {
+  // STATES
 
-  // state
-  const [items, setItems] = useState([]); // Product list
-  const [quantities, setQuantities] = useState([]); // Quantity selector for each product
-  const [cartItems, setCartItems] = useState([]); // Cart array
-  const [isEditing, setIsEditing] = useState(false);// editing mode for form
-// form data state
+  // product list from the database
+  const [items, setItems] = useState([]);
+
+  // quantity selector for each product (for the products list)
+  const [quantities, setQuantities] = useState([]);
+
+  // cart items
+  const [cartItems, setCartItems] = useState([]);
+
+  // editing state for the product form
+  const [isEditing, setIsEditing] = useState(false);
+
+  // form data for add / edit product
   const [formData, setFormData] = useState({
     id: "",
     productName: "",
@@ -23,12 +32,11 @@ export default function GroceriesAppContainer() {
     price: "",
   });
 
-  // server message state
+  // Message from the server (success / error)
   const [serverMessage, setServerMessage] = useState("");
 
-  // load product from MongoDB:from backend/server.js
+  // fetch products from database on component mount
 
-  //useEffect to load products on component mount
   useEffect(() => {
     loadProducts();
   }, []);
@@ -36,11 +44,11 @@ export default function GroceriesAppContainer() {
   const loadProducts = async () => {
     try {
       const res = await axios.get("http://localhost:3000/products");
-      setItems(response.data);
+      setItems(res.data);
 
-      // setting quantities for each product to 0 initially
+      // Build / rebuild quantity tracker for each product
       setQuantities(
-        response.data.map((item) => ({
+        res.data.map((item) => ({
           id: item.id,
           qty: 0,
         }))
@@ -49,8 +57,10 @@ export default function GroceriesAppContainer() {
       console.log(error.message);
     }
   };
- 
-  // Handling form data
+
+  //////////////////////////////////////////
+  // FORM HANDLERS (similar to handleOnchange / handleOnSubmit)
+
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -60,14 +70,17 @@ export default function GroceriesAppContainer() {
 
     try {
       if (isEditing) {
+        // Update existing product
         await updateProduct(formData._id);
         setIsEditing(false);
       } else {
+        // Add new product
         await axios
           .post("http://localhost:3000/products", formData)
           .then((res) => setServerMessage(res.data.message));
       }
 
+      // Reset form
       setFormData({
         id: "",
         productName: "",
@@ -76,10 +89,11 @@ export default function GroceriesAppContainer() {
         price: "",
       });
 
+      // Refresh product list
       loadProducts();
     } catch (error) {
       console.log(error.message);
-      
+      setServerMessage("Something went wrong.");
     }
   };
 
@@ -95,7 +109,9 @@ export default function GroceriesAppContainer() {
     });
   };
 
-  // update and delete product functions
+  //////////////////////////////////////////
+  // UPDATE AND DELETE HANDLERS (similar to handleUpdate / handleDelete)
+
   const updateProduct = async (mongoId) => {
     try {
       await axios
@@ -116,11 +132,13 @@ export default function GroceriesAppContainer() {
 
       loadProducts();
     } catch (error) {
-      console.log("Delete Error:", error.message);
+      console.log(error.message);
     }
   };
 
-  // setting quantity logic
+  //////////////////////////////////////////
+  // QUANTITY LOGIC (replaces handleAddQuantity / handleRemoveQuantity)
+
   const adjustQuantity = (id, type, source) => {
     const setter = source === "cart" ? setCartItems : setQuantities;
 
@@ -141,7 +159,9 @@ export default function GroceriesAppContainer() {
     );
   };
 
-  // cart handlers
+  //////////////////////////////////////////
+  // CART HANDLERS (similar idea to your old cartList logic)
+
   const addToCart = (id) => {
     const item = items.find((p) => p.id === id);
     const selectedQty = quantities.find((q) => q.id === id)?.qty;
@@ -169,12 +189,16 @@ export default function GroceriesAppContainer() {
 
   const clearCart = () => setCartItems([]);
 
-  // rendering the groceries app container with NavBar, ProductsContainer, and CartContainer
+  //////////////////////////////////////////
+  // RENDER
+
   return (
     <div className="groceries-app">
+      {/* NavBar gets number of items in cart */}
       <NavBar quantity={cartItems.length} />
 
       <div className="GroceriesApp-Container">
+        {/* Products section: list + form + edit/delete */}
         <ProductsContainer
           products={items}
           quantities={quantities}
@@ -189,6 +213,7 @@ export default function GroceriesAppContainer() {
           serverMessage={serverMessage}
         />
 
+        {/* Cart section */}
         <CartContainer
           cartList={cartItems}
           adjustQuantity={adjustQuantity}

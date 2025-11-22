@@ -1,7 +1,7 @@
 // backend/server.js
-// server for products API
-//stating server and connecting to database
+// express server for products API
 
+//stating server and connecting to database
 const express = require("express");
 const server = express();
 const port = 3000;
@@ -35,7 +35,7 @@ mongoose
 
 // Routes
 
-// server checking route
+// simple route to check if server is running
 server.get("/", (request, response) => {
   response.send("server is live");
 });
@@ -72,11 +72,11 @@ server.post("/products", async (request, response) => {
   }
 });
 
-// DELETE /products/:id
-// delete a product by fetching id from db
+// DELETE /products :id
+// delete a product
 server.delete("/products/:id", async (request, response) => {
   const { id } = request.params;
-  const objectId = new mongoose.Types.ObjectId(id); // Convert id to Mongoose ObjectId
+  const objectId = new mongoose.Types.ObjectId(id); // it converts id to Mongoose ObjectId
 
   try {
     await Product.findByIdAndDelete(objectId);
@@ -86,12 +86,12 @@ server.delete("/products/:id", async (request, response) => {
   }
 });
 
-// PATCH /products/:id
+// PATCH /products :id
 // update an existing product in db
 server.patch("/products/:id", async (request, response) => {
   const { id } = request.params;
   const { id: productId, productName, brand, image, price } = request.body;
-  const objectId = new mongoose.Types.ObjectId(id); // Convert id to Mongoose ObjectId
+  const objectId = new mongoose.Types.ObjectId(id); // it converts id to Mongoose ObjectId
 
   try {
     await Product.findByIdAndUpdate(objectId, {

@@ -14,6 +14,7 @@ export default function NavBar({ quantity }) {
               ? "src/assets/cart-full.png"
               : "src/assets/cart-empty.png"
           }
+          alt="Cart"
         />
       </div>
     </nav>
